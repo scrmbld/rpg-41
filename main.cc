@@ -1,3 +1,4 @@
+//Allen, Walkup, Zamudio
 #include "map.h"
 #include "player.h"
 #include <unistd.h>
@@ -78,7 +79,7 @@ void pause(Map &map) {
 		if (ch == UP && menupos > 0) {
 			menupos -= 1;
 		}
-		if (ch == DOWN && menupos < 3) {
+		if (ch == DOWN && menupos < 2) {
 			menupos += 1;
 		}
 		if (ch == ENTER) break;
@@ -131,6 +132,10 @@ bool combat() {
 }
 
 int main() {
+	Hero player;
+	cout << player << endl;
+	player = Hero(6);
+	cout << player << endl;
 	Map map;
 	//ask the user if they want a new game or to continue
 	cout << "Do you want continue(y/n)?\n";

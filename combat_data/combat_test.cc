@@ -39,17 +39,17 @@ bool win_con(CircSLelement<Fighter> *head) {
 	CircSLelement<Fighter> *pos = head;
 	while (pos->getLabel() != "Player") {
 		if (!is_dead(pos)) return false;
-		pos = pos->getNext()
+		pos = pos->getNext();
 	}
 	//pos must be set to player to get here
-	if (pos->getValue.get_health == 0) return false;//the player can't win if they're dead
+	if (pos->getValue().get_health() == 0) return false;//the player can't win if they're dead
 	return true;
 }
 
 //returns true if the player is dead
 bool lose_con (CircSLelement<Fighter> *head) {
 	CircSLelement<Fighter> *pos = head;
-	while (pos->getNext( != head)) {
+	while (pos->getNext() != head) {
 		if (pos->getLabel() == "Player" && is_dead(pos)) return true; 
 	}
 
@@ -80,17 +80,26 @@ bool combat_mode() {
 */	
 	//run the encounter
 	CircSLelement<Fighter> *pos = encounter;
+	cout << encounter_size << endl;
 	while (pos){	
 		if (is_dead(pos)) {
 			pos = pos->getNext();
 			continue;	
 		}
-		if (win_con(encounter)) return true;
-		else if ()
+		if (pos->getLabel() == "Player") {
+			int damage = pos->getValue().get_attack() / pos->getNext()->getValue().get_defense();
+			pos->getNext()->getValue().change_health(pos->getNext()->getValue().get_health() - damage);
+		} else {
+			int damage = pos->getValue().get_attack() / encounter->getValue().get_defense();
+			encounter->getValue().change_health(encounter->getValue().get_health() - damage);
+		}
 		cout << pos->getValue() << endl;
+		cout << pos->getNext()->getValue() << endl;
+		if (win_con(encounter)) return true;
+		else if (lose_con(encounter)) return false;
 		pos = pos->getNext();
-		if (pos == encounter) break;
-	}	
+	}
+	return true;
 }
 
 
@@ -102,7 +111,8 @@ int main() {
 	cin >> choice;
 	if (!cin || choice < 0) die();
 	if (choice == 1) {
-		combat_mode();
+		if (combat_mode()) cout << "VICTORY!!\n";
+		else cout  << "Deafeat...\n";
 	}
 
 
