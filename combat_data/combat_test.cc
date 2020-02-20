@@ -36,7 +36,7 @@ bool is_dead(CircSLelement<Fighter>* f) {
 
 //checks to see if the player has won the fight, breaks if there's no player in the list
 bool win_con(CircSLelement<Fighter> *head) {
-	CircSLelement<Fighter> *pos = head;
+	CircSLelement<Fighter> *pos = head->getNext();
 	while (pos->getLabel() != "Player") {
 		if (!is_dead(pos)) return false;
 		pos = pos->getNext();
@@ -51,6 +51,7 @@ bool lose_con (CircSLelement<Fighter> *head) {
 	CircSLelement<Fighter> *pos = head;
 	while (pos->getNext() != head) {
 		if (pos->getLabel() == "Player" && is_dead(pos)) return true; 
+		pos = pos->getNext();
 	}
 
 	return false;
@@ -66,7 +67,7 @@ bool combat_mode() {
 	CircSLelement<Fighter> *encounter = new CircSLelement<Fighter>(CircSLelement<Fighter>(Fighter("The Wizard", 15, 2, 0.5, 1), "Player"));
 	CircSLelement<Fighter> *temp = encounter;
 	for (int i = 0; i < encounter_size; i++) {
-		temp->setNext(new CircSLelement<Fighter>(Fighter("Goblin " + to_string(i), 0, 1, 0.3, 4), "enemy"));
+		temp->setNext(new CircSLelement<Fighter>(Fighter("Goblin " + to_string(i), 1, 0, 0.3, 4), "enemy"));
 		temp = temp->getNext();
 	}
 	temp->setNext(encounter);
@@ -87,16 +88,23 @@ bool combat_mode() {
 			continue;	
 		}
 		if (pos->getLabel() == "Player") {
-			int damage = pos->getValue().get_attack() / pos->getNext()->getValue().get_defense();
-			pos->getNext()->getValue().change_health(pos->getNext()->getValue().get_health() - damage);
+			CircSLelement<Fighter> *tgt = pos->getNext();
+			while (is_dead(tgt)) {
+				tgt = tgt->getNext();
+			}
+			int damage = pos->getValue().get_attack() / tgt->getValue().get_defense();
+			cout << damage << endl;
+			tgt->getValue().change_health(tgt->getValue().get_health() - damage);
 		} else {
 			int damage = pos->getValue().get_attack() / encounter->getValue().get_defense();
+			cout << damage << endl;
 			encounter->getValue().change_health(encounter->getValue().get_health() - damage);
 		}
 		cout << pos->getValue() << endl;
 		cout << pos->getNext()->getValue() << endl;
 		if (win_con(encounter)) return true;
 		else if (lose_con(encounter)) return false;
+		cout << "a" << endl;
 		pos = pos->getNext();
 	}
 	return true;
