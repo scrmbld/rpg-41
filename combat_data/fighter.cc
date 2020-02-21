@@ -5,10 +5,10 @@ using namespace std;
 Fighter::Fighter(int lvl, string name, int hp, int attack, float defense, int speed) {
 	this->lvl = lvl;
 	this->name = name;
-	this->hp = hp * (1.1 * lvl);
-	this->attack = attack * (1.1 * lvl);
-	this->defense = defense * (1.1 * lvl);
-	this->speed = speed * (1.1 * lvl);
+	this->hp = hp * (1 + 0.1 * lvl);
+	this->attack = attack * (1 + 0.1 * lvl);
+	this->defense = defense * (1 + 0.1 * lvl);
+	this->speed = speed * (1 + 0.1 * lvl);
 }
 
 Fighter::Fighter(string name, int hp, int attack, float defense, int speed) {
@@ -29,6 +29,7 @@ Fighter::Fighter() {
 }
 
 //getters
+int Fighter::get_level() { return lvl; }
 string Fighter::get_name() { return name; }
 int Fighter::get_health() { return hp; }
 int Fighter::get_attack() { return attack; }

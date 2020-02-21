@@ -24,7 +24,7 @@ class Hero : public Fighter {
 			this->lvl = 1;
 			this->exp = 0;
 		}
-		Hero(int lvl) : Fighter(lvl, name, base_hp, base_attack, base_defense, base_speed) {}
+		Hero(int lvl) : Fighter(lvl, name, 10, 5, 1.0, 10) {}
 		Hero(int lvl, string player_name, int base_hp, int base_attack, float base_defense, int base_speed) : Fighter(lvl, player_name, base_hp, base_attack, base_defense, base_speed) {
 			//base stats
 			this->base_hp = base_hp;
