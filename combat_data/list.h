@@ -27,4 +27,4 @@ class LL{
 		~LL();
 };
 
-void insert(LL* &tail, LL &new_item);
+void insert(LL* tail, LL new_item);

@@ -31,7 +31,38 @@ class Map {
 	static const size_t ROOM_HEIGHT = 20;
 	static const size_t WIDTH = 216; //the width of the area that can be printed
 	static const size_t HEIGHT = 120;//the height of the area that can be printed
-	//load map
+	//save map
+	void save_map() {
+		//shamelessly stolen from stackoverflow, clears map_data/saved_map.txt
+		std::ofstream ofs;
+		ofs.open("map_data/saved_map.txt", std::ofstream::out | std::ofstream::trunc);
+		ofs.close();
+		
+		ofstream outs("map_data/saved_map.txt");
+		for (const auto &v : view) {
+			string s;
+			for (char c : v) {
+				s.push_back(c);
+			}
+			outs << s << "\n";
+		}
+	}
+	//load saved map
+	void load_map() {
+		view.clear();
+		ifstream ins("map_data/saved_map.txt");
+		for (int i = 0; i < HEIGHT; i++) {
+			string s;
+			getline(ins, s);
+			vector<char> vec;
+			for (int j = 0; j < WIDTH; j++) {
+				vec.push_back(s.at(j));
+			}
+			view.push_back(vec);
+		}
+		
+	}
+	//generate map
 	void init_map() {
 		uniform_int_distribution<int> d100(1, 100);
 		view.clear();
@@ -129,17 +160,10 @@ class Map {
 				//if (i == cursor_x && j == cursor_y)
 				//	attron(A_UNDERLINE | A_BOLD);
 				int color = 1;
-				if (view[i][j] == WALL)
-					color = 5;
-				else if (view[i][j] == WATER)
-					color = 2;
-				else if (view[i][j] == TREASURE)
-					color = 4;
-				else if (view[i][j] == MONSTER)
-					color = 6;
-				if (i == y && j == x) {
-					color = 3;
-				}
+				if (view[i][j] == WALL) color = 5;
+				else if (view[i][j] == MONSTER) color = 2;
+				else if (view[i][j] == TREASURE) color = 4;
+				
 				if (i == y && j == x) {
 					color = 3;
 					attron(COLOR_PAIR(color));
@@ -164,5 +188,11 @@ class Map {
 		assert(x < WIDTH && y < HEIGHT && x >= 0 && y >= 0);
 		return view[y][x];
 	}
+
+	void set_spot(int x, int y, char c) {
+		assert(x < WIDTH && y < HEIGHT && x >= 0 && y >= 0);
+		view[y][x] = c;
+	}
+	
 };
 

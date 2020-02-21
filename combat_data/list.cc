@@ -55,6 +55,7 @@ LL::~LL() {
 
 
 //other functions
-void insert(LL* &tail, LL &new_item) {
-	if 
+void insert(LL* tail, LL new_item) {
+	LL* temp = new LL(new_item.get_fighter(), tail->get_next());
+	tail->change_next(temp);
 }
