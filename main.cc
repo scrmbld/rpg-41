@@ -1,6 +1,7 @@
 //Allen, Walkup, Zamudio
 #include "map.h"
 #include "player.h"
+#include "combat_data/combat.h"
 #include <unistd.h>
 #include <CircSLelement.h>
 
@@ -109,7 +110,6 @@ void load_player(Hero &player) {
 	for (int i = 0; i < 8; i++) {
 		string s;
 		getline(ins, s, '\n');
-		cout << s << endl;
 		vec.push_back(s);
 	}
 	player = Hero(stoi(vec.at(0)), stoi(vec.at(1)), vec.at(2), stoi(vec.at(3)), stoi(vec.at(4)), stof(vec.at(5)), stoi(vec.at(6)), stoi(vec.at(7)));
@@ -198,11 +198,7 @@ bool combat() {
 
 int main() {
 	Hero player;
-	cout << player << endl;
-	player = Hero(6);
-	cout << player << endl;
 	Map map;
-	Hero player;
 	//ask the user if they want a new game or to continue
 	cout << "Do you want to continue(y/n)?\n";
 	while (true) {
@@ -212,8 +208,15 @@ int main() {
 			map.load_map();
 			load_player(player);
 			break;
-		} else if (start_type == "n" || start_type == "N") break;
+		} else if (start_type == "n" || start_type == "N") {
+			cout << "What is the name of your intrepid explorer?\n";
+			string player_name;
+			cin >> player_name;
+			player = Hero(player_name);
+			break;
+		}
 	}
+	
 
 	turn_on_ncurses();
 	//determine starting location
@@ -259,8 +262,23 @@ int main() {
 		}
 
 		if (map.spot_data(x, y) == Map::MONSTER) {
-			if (combat()) map.set_spot(x, y, '.');
-			else break;
+			string tresh;
+			clear();
+			endwin();
+			system("clear");
+			if (combat_mode(player)) {
+				cout << "VICTORY!!\n";
+				cout << "enter any key to continue\n";
+				cin >> tresh;
+				map.set_spot(x, y, '.');
+			}
+			else {
+				cout << "Defeat...\n";
+				cout << "enter any key to continue\n";
+				cin >> tresh;
+				break;
+			}
+			turn_on_ncurses();
 		}
 		usleep(5000);
 	}

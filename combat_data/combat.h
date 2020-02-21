@@ -9,6 +9,8 @@
 using namespace std;
 using namespace bridges;
 
+
+
 //die function
 void die(string s = "INVALID INPUT!") {
     cout << s << endl;
@@ -35,7 +37,7 @@ bool win_con(CircSLelement<Fighter> *head) {
 		pos = pos->getNext();
 	}
 	//pos must be set to player to get here
-	if (pos->getValue().get_health() == 0) return false;//the player can't win if they're dead
+	if (pos->getValue().get_health() <= 0) return false;//the player can't win if they're dead
 	return true;
 }
 
@@ -51,25 +53,27 @@ bool lose_con (CircSLelement<Fighter> *head) {
 }
 
 bool combat_mode(Fighter player) {
-    int lvl = player.get_level();
-	cout << endl;
-    system("figlet -f smblock BATTLE  | lolcat"); //prints title to the screen
-    cout << "(ง'̀-'́)ง" << endl;
+    Bridges *bridges = new Bridges(222, "scrmbld", 
+			"347981115445");
+	int lvl = player.get_level();
 	
 	//generate the encounter
 	srand(time(0));
 	int encounter_size = rand() % 5 + 1;
 	CircSLelement<Fighter> *encounter = new CircSLelement<Fighter>(Fighter(lvl, "Goblin 0", rand() % 5 + 8, rand() % 3 + 1, (rand() % 7 + 3) * 0.1 , rand() % 3 + 10), "enemy");
+	encounter->getVisualizer()->setColor("red");
 	CircSLelement<Fighter> *temp = encounter;
 	
 	for (int i = 0; i < encounter_size; i++) {
 		temp->setNext(new CircSLelement<Fighter>(Fighter(lvl, "Goblin " + to_string(i + 1), rand() % 5 + 8, rand() % 3 + 1, (rand() % 7 + 3) * 0.1 , 9 - i), "enemy"));
+		temp->getVisualizer()->setColor("red");
 		temp = temp->getNext();
 	}
 	temp->setNext(encounter);
 	temp = encounter;
 
 	CircSLelement<Fighter> *p = new CircSLelement<Fighter>(player, "Player");
+	p->getVisualizer()->setColor("blue");
 	//if the player is faster than all the enemies
 	if (player.get_speed() >= encounter->getValue().get_speed()) {
 		p->setNext(encounter);
@@ -93,9 +97,13 @@ bool combat_mode(Fighter player) {
 			if (temp == encounter) break;
 		}
 	}
+	bridges->setDataStructure(encounter);
+	bridges->visualize();
 	//run the encounter
+	cout << endl;
+    system("figlet -f smblock BATTLE  | lolcat"); //prints title to the screen
+    cout << "(ง'̀-'́)ง" << endl;
 	CircSLelement<Fighter> *pos = encounter;
-	cout << encounter_size << endl;
 	while (pos){	
 		if (is_dead(pos)) {
 			pos = pos->getNext();
@@ -111,7 +119,7 @@ bool combat_mode(Fighter player) {
 			cout << damage << endl;
 			tgt->getValue().change_health(tgt->getValue().get_health() - damage);
 			cout << pos->getValue() << endl;
-			cout << pos->getNext()->getValue() << endl;
+			cout << tgt->getValue() << endl;
 		} else {
 			int damage = pos->getValue().get_attack() / p->getValue().get_defense();
 			cout << damage << endl;
@@ -128,17 +136,3 @@ bool combat_mode(Fighter player) {
 }
 
 
-int main() {
-	
-	//MONSTERS
-	int choice;
-	cout << "Fight Mode? 1.) Yes 2.)  No " << endl;
-	cin >> choice;
-	if (!cin || choice < 0) die();
-	if (choice == 1) {
-		if (combat_mode(Fighter(1, "The Wizard", 10, 5, 1.0, 10))) cout << "VICTORY!!\n";
-		else cout  << "Deafeat...\n";
-	}
-
-
-}
