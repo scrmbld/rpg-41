@@ -52,7 +52,7 @@ bool lose_con (CircSLelement<Fighter> *head) {
 	return false;
 }
 
-bool combat_mode(Fighter player) {
+bool combat_mode(Fighter &player) {
     Bridges *bridges = new Bridges(222, "scrmbld", 
 			"347981115445");
 	int lvl = player.get_level();
@@ -104,10 +104,10 @@ bool combat_mode(Fighter player) {
     system("figlet -f smblock BATTLE  | lolcat"); //prints title to the screen
     cout << "(ง'̀-'́)ง" << endl;
 	CircSLelement<Fighter> *pos = encounter;
-	while (pos){	
+	while (pos) {
 		if (is_dead(pos)) {
 			pos = pos->getNext();
-			continue;	
+			continue;
 		}
 		if (pos->getLabel() == "Player") {
 			CircSLelement<Fighter> *tgt = pos->getNext();
@@ -116,20 +116,17 @@ bool combat_mode(Fighter player) {
 				if (tgt->getLabel() == "Player") break; //prevents infinite loops
 			}
 			int damage = pos->getValue().get_attack() / tgt->getValue().get_defense();
-			cout << damage << endl;
 			tgt->getValue().change_health(tgt->getValue().get_health() - damage);
 			cout << pos->getValue() << endl;
 			cout << tgt->getValue() << endl;
 		} else {
 			int damage = pos->getValue().get_attack() / p->getValue().get_defense();
-			cout << damage << endl;
 			p->getValue().change_health(p->getValue().get_health() - damage);
 			cout << pos->getValue() << endl;
 			cout << p->getValue() << endl;
 		}
 		if (win_con(p)) return true;
 		else if (lose_con(p)) return false;
-		cout << "a" << endl;
 		pos = pos->getNext();
 	}
 	return true;

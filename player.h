@@ -66,13 +66,13 @@ class Hero : public Fighter {
 		//increments base speed
 		void base_speed_inc() { this->base_hp = base_hp; }
 
-
-		bool give_exp(int exp) {
+		//gives the player exp
+		void give_exp(int exp) {
 			this->exp += exp;
 			if (exp > 16 * pow(2, lvl)) {
 				level++;
-				return true;
 			}
 		}
-
+		//update the player's money
+		void change_money(int x) { this->money = x; }
 };

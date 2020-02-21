@@ -250,6 +250,7 @@ int main() {
 		clear();
 		map.draw(x,y);
 		mvprintw(Map::DISPLAY + 1, Map::DISPLAY + 1,"X: %i Y: %i\n",x,y);
+		mvprintw(Map::DISPLAY + 2, Map::DISPLAY + 1,"$: %i",player.get_money());
 		refresh();
 		if (is_stairs(map.spot_data(x, y))) {
 			if (descend(x, y, map)) {
@@ -280,9 +281,15 @@ int main() {
 			}
 			turn_on_ncurses();
 		}
+
+		if (map.spot_data(x, y) == Map::TREASURE) {
+			player.change_money(player.get_money() + 100);
+			map.set_spot(x, y, '.');
+		}
 		usleep(5000);
 	}
 	clear();
 	endwin(); // End curses mode
 	system("clear");
+	cout << player.get_money() << endl;
 }
