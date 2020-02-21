@@ -1,4 +1,12 @@
 //Allen, Walkup, Zamudio
+//each floor has a staircase in one room
+
+/*|__|
+  |--|
+*/
+//go down the staircase to enter a new floor
+//get through 5 floors to beat the game
+
 #include "map.h"
 #include "player.h"
 #include "combat_data/combat.h"

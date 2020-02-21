@@ -1,4 +1,3 @@
-//FOR TESTING PURPOSES, DELETE LATER
 #include "fighter.h"
 #include "monsters.h"
 #include "../player.h"
@@ -73,13 +72,14 @@ bool combat_mode(Hero &player) {
 	
 	//generate the encounter
 	int encounter_size = rand() % 4 + 1;
-	CircSLelement<Fighter> *encounter = new CircSLelement<Fighter>(Fighter(lvl, "Goblin 0", rand() % 5 + 8, rand() % 3 + 1, (rand() % 7 + 3) * 0.1 , spd), "enemy");
+	CircSLelement<Fighter> *encounter = new CircSLelement<Fighter>(Fighter(lvl, "Goblin 0", rand() % 5 + 8, rand() % 3 + 1, (rand() % 7 + 3) * 0.1 , spd), "enemy 0");
 	encounter->getVisualizer()->setColor("red");
 	CircSLelement<Fighter> *temp = encounter;
 	
 	for (int i = 0; i < encounter_size; i++) {
-		temp->setNext(new CircSLelement<Fighter>(Fighter(lvl, "Goblin " + to_string(i + 1), rand() % 5 + 8, rand() % 3 + 1, (rand() % 7 + 3) * 0.1 , spd - i - 1), "enemy"));
-		temp->getVisualizer()->setColor("red");
+
+		temp->setNext(new CircSLelement<Fighter>(Fighter(lvl, "Goblin " + to_string(i + 1), rand() % 5 + 8, rand() % 3 + 1, (rand() % 7 + 3) * 0.1 , spd - i - 1), "enemy " + to_string(i + 1)));
+		temp->getNext()->getVisualizer()->setColor("red");
 		temp = temp->getNext();
 	}
 	temp->setNext(encounter);
