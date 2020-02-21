@@ -55,7 +55,7 @@ bool descend(int &x, int &y, Map &map) {
 }
 
 //Saves the player
-void save_player(Hero &player) {
+void save_player(Hero &player, int &floor) {
 		//Taken from stack verflow
 		std::ofstream ofs;
 		ofs.open("saved_player.txt", std::ofstream::out | std::ofstream::trunc);
@@ -86,6 +86,9 @@ void save_player(Hero &player) {
 		
 		s = to_string(player.get_money());
 		outs << s << endl;
+
+		s = to_string(floor);
+		outs << floor << endl;
 		
 		/*
 		s = to_string(player.get_attack());
@@ -103,7 +106,7 @@ void save_player(Hero &player) {
 }
 
 //Loading the player
-void load_player(Hero &player) {
+void load_player(Hero &player, int &floor) {
 	ifstream ins("saved_player.txt");
 	vector<string> vec;
 	//Iterates through every field saved in the saved_player.txt file. 
@@ -113,9 +116,12 @@ void load_player(Hero &player) {
 		vec.push_back(s);
 	}
 	player = Hero(stoi(vec.at(0)), stoi(vec.at(1)), vec.at(2), stoi(vec.at(3)), stoi(vec.at(4)), stof(vec.at(5)), stoi(vec.at(6)), stoi(vec.at(7)));
+	string s;
+	ins >> s;
+	floor = stoi(s);
 } 
 
-void pause(Map &map, Hero &player) {
+void pause(Map &map, Hero &player, int &floor) {
 	//make the text box
 	int DIALOGUE_WIDTH = 25;
 	int DIALOGUE_HEIGHT = 17;
@@ -152,7 +158,7 @@ void pause(Map &map, Hero &player) {
 	if (menupos == 0) return;
 	else if (menupos == 1) {
 		map.save_map();
-		save_player(player);	
+		save_player(player, floor);	
 	}
 	else if (menupos == 2) {
 		clear();
@@ -197,8 +203,13 @@ bool combat() {
 }
 
 int main() {
+	int level = 0;
 	Hero player;
 	Map map;
+	cout << "github for this project:\n";
+	cout << "https://github.com/scrmbld/rpg-41\n";
+	cout << "https://github.com/MayZamudio/rpg-41\n";\
+	cout << "https://github.com/walkupcraig75/rpg-41\n";
 	//ask the user if they want a new game or to continue
 	cout << "Do you want to continue(y/n)?\n";
 	while (true) {
@@ -206,7 +217,7 @@ int main() {
 		cin >> start_type;
 		if (start_type == "y" || start_type == "Y") {
 			map.load_map();
-			load_player(player);
+			load_player(player, level);
 			break;
 		} else if (start_type == "n" || start_type == "N") {
 			cout << "What is the name of your intrepid explorer?\n";
@@ -226,7 +237,7 @@ int main() {
 	while (true) {
 		int ch = getch(); // Wait for user input, with TIMEOUT delay
 		if (ch == 'q' || ch == 'Q') {
-			pause(map, player);
+			pause(map, player, level);
 		}
 		else if (ch == RIGHT && map.spot_data(x + 1, y) != Map::WALL) {
 			x++;
@@ -251,9 +262,18 @@ int main() {
 		map.draw(x,y);
 		mvprintw(Map::DISPLAY + 1, Map::DISPLAY + 1,"X: %i Y: %i\n",x,y);
 		mvprintw(Map::DISPLAY + 2, Map::DISPLAY + 1,"$: %i",player.get_money());
+		mvprintw(Map::DISPLAY + 3, Map::DISPLAY + 1,"floor: %i", level);
 		refresh();
 		if (is_stairs(map.spot_data(x, y))) {
 			if (descend(x, y, map)) {
+				level++;
+				if (level == 5) {
+					clear();
+					endwin(); // End curses mode
+					system("clear");
+					cout << "win\n";
+					exit(0);
+				}
 				map.init_map();
 				start_pos(x, y, map);
 			} else {
@@ -291,5 +311,4 @@ int main() {
 	clear();
 	endwin(); // End curses mode
 	system("clear");
-	cout << player.get_money() << endl;
 }
