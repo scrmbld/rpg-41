@@ -1,7 +1,7 @@
 a.out: main.o fighter.o combat_data/fighter.h map.h load_rooms.h player.h
 	\g++ main.o fighter.o -lcurl -lncurses -O3 
 
-main.o: main.cc player.h map.h
+main.o: main.cc player.h map.h combat_data/combat.h
 	\g++ -c main.cc -O3
 
 fighter.o: combat_data/fighter.cc combat_data/fighter.h
