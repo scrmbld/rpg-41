@@ -29,6 +29,7 @@ Fighter::Fighter() {
 }
 
 //getters
+int Fighter::get_level() { return lvl; }
 string Fighter::get_name() { return name; }
 int Fighter::get_health() { return hp; }
 int Fighter::get_attack() { return attack; }

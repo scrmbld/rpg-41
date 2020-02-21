@@ -3,7 +3,7 @@
 using namespace std;
 class Fighter {
 	protected:
-		int lvl;
+		int lvl = 0;
 		string name;
 		int attack;
 		float defense;
@@ -15,6 +15,7 @@ class Fighter {
 		//WARNING: unleveled Fighter constructor is deprecated
 		Fighter(string name, int hp, int attack, float defense, int speed);
 		//getters
+		int get_level();
 		string get_name();
 		int get_health();
 		int get_attack();
