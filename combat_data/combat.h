@@ -1,7 +1,7 @@
 //FOR TESTING PURPOSES, DELETE LATER
 #include "fighter.h"
 #include "monsters.h"
-#include "list.h"
+#include "../player.h"
 #include <CircSLelement.h>
 #include <Bridges.h>
 #include <iostream>
@@ -52,20 +52,33 @@ bool lose_con (CircSLelement<Fighter> *head) {
 	return false;
 }
 
-bool combat_mode(Fighter &player) {
+//rolls for speed 3 times, returns the highest roll
+int speed_gen() {
+	int x = 0;
+	int temp = 0;
+	for (int i = 0; i < 3; i++) {
+		temp = rand() % 12 + 5;
+		if (temp > x) x = temp;
+	}
+	return x;
+}
+
+bool combat_mode(Hero &player) {
+	//feel free to steal my api key, don't care
     Bridges *bridges = new Bridges(222, "scrmbld", 
 			"347981115445");
 	int lvl = player.get_level();
+	srand(time(0));
+	int spd  = speed_gen();
 	
 	//generate the encounter
-	srand(time(0));
-	int encounter_size = rand() % 5 + 1;
-	CircSLelement<Fighter> *encounter = new CircSLelement<Fighter>(Fighter(lvl, "Goblin 0", rand() % 5 + 8, rand() % 3 + 1, (rand() % 7 + 3) * 0.1 , rand() % 3 + 10), "enemy");
+	int encounter_size = rand() % 4 + 1;
+	CircSLelement<Fighter> *encounter = new CircSLelement<Fighter>(Fighter(lvl, "Goblin 0", rand() % 5 + 8, rand() % 3 + 1, (rand() % 7 + 3) * 0.1 , spd), "enemy");
 	encounter->getVisualizer()->setColor("red");
 	CircSLelement<Fighter> *temp = encounter;
 	
 	for (int i = 0; i < encounter_size; i++) {
-		temp->setNext(new CircSLelement<Fighter>(Fighter(lvl, "Goblin " + to_string(i + 1), rand() % 5 + 8, rand() % 3 + 1, (rand() % 7 + 3) * 0.1 , 9 - i), "enemy"));
+		temp->setNext(new CircSLelement<Fighter>(Fighter(lvl, "Goblin " + to_string(i + 1), rand() % 5 + 8, rand() % 3 + 1, (rand() % 7 + 3) * 0.1 , spd - i - 1), "enemy"));
 		temp->getVisualizer()->setColor("red");
 		temp = temp->getNext();
 	}
@@ -89,6 +102,11 @@ bool combat_mode(Fighter &player) {
 		while (temp) {
 			if (player.get_speed() <= temp->getValue().get_speed() && player.get_speed() >= temp->getNext()->getValue().get_speed()) {
 				p->setNext(temp->getNext());
+				temp->setNext(p);
+				break;
+			}
+			else if (temp->getNext() == encounter) {//if the player is slow AF
+				p->setNext(encounter);
 				temp->setNext(p);
 				break;
 			}
@@ -117,15 +135,30 @@ bool combat_mode(Fighter &player) {
 			}
 			int damage = pos->getValue().get_attack() / tgt->getValue().get_defense();
 			tgt->getValue().change_health(tgt->getValue().get_health() - damage);
-			cout << pos->getValue() << endl;
-			cout << tgt->getValue() << endl;
+			if (tgt->getValue().get_health() < 0) tgt->getValue().change_health(0);
+			cout << pos->getValue().get_name() << " dealt " << damage << " damage to " << tgt->getValue().get_name() << endl;
+			if (tgt->getValue().get_health() <= 0) cout << tgt->getValue().get_name() << " has been defeated!\n";
 		} else {
 			int damage = pos->getValue().get_attack() / p->getValue().get_defense();
 			p->getValue().change_health(p->getValue().get_health() - damage);
-			cout << pos->getValue() << endl;
-			cout << p->getValue() << endl;
+			if (p->getValue().get_health() < 0) p->getValue().change_health(0);
+			cout << pos->getValue().get_name() << " dealt " << damage << " damage to " << p->getValue().get_name() << endl;
+			cout << p->getValue().get_name() << " has " << p->getValue().get_health() << " health remaining\n";
+			if (p->getValue().get_health() <= 0) cout << p->getValue().get_name() << " has been defeated!\n";
 		}
-		if (win_con(p)) return true;
+
+		cout << endl;
+
+		if (win_con(p)) {
+			if (player.give_exp((encounter_size * pow(2, lvl)) * 0.7)) {
+				cout << "You recieved " << encounter_size * pow(2, lvl) * 0.4 << " exp!\n";
+				cout << "You leveled up!\n";
+				cout << "Level " << player.get_lvl();
+			} else {
+				cout << "You recieved " << encounter_size * pow(2, lvl) * 0.4 << " exp!\n";
+			}
+			return true;
+		}
 		else if (lose_con(p)) return false;
 		pos = pos->getNext();
 	}
