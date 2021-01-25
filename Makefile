@@ -1,11 +1,22 @@
-a.out: main.o fighter.o combat_data/fighter.h map.h load_rooms.h player.h
-	\g++ main.o fighter.o -lcurl -lncurses -O3 
+#c++ compiler
+CPPC = g++
+#compiler flags
+CPPFLAGS = -c -O3
+#linker flags
+LFLAGS = -lcurl -lncurses -O3
+#.o files
+OBJS = fighter.o main.o
+#executable name
+PROG = RPG
 
-main.o: main.cc player.h map.h combat_data/combat.h
-	\g++ -c main.cc -O3
+${PROG}: ${OBJS}
+	${CPPC} ${OBJS} ${LFLAGS} -o ${PROG}
 
-fighter.o: combat_data/fighter.cc combat_data/fighter.h
-	g++ -c combat_data/fighter.cc
+%.o: %.cc
+	${CPPC} $< ${CPPFLAGS}
 
 clean:
-	rm a.out core *.o
+	rm ${PROG} *.o
+
+fighter.o: fighter.cc combat.h fighter.h
+main.o:	main.cc map.h player.h combat.h load_rooms.h

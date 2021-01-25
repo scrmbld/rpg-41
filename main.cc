@@ -9,7 +9,7 @@
 
 #include "map.h"
 #include "player.h"
-#include "combat_data/combat.h"
+#include "combat.h"
 #include <unistd.h>
 #include <CircSLelement.h>
 

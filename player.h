@@ -1,5 +1,5 @@
 #pragma once
-#include "combat_data/fighter.h"
+#include "fighter.h"
 #include <unistd.h>
 using namespace std;
 

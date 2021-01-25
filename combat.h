@@ -1,6 +1,5 @@
 #include "fighter.h"
-#include "monsters.h"
-#include "../player.h"
+#include "player.h"
 #include <CircSLelement.h>
 #include <Bridges.h>
 #include <iostream>
@@ -64,8 +63,8 @@ int speed_gen() {
 
 bool combat_mode(Hero &player) {
 	//feel free to steal my api key, don't care
-    Bridges *bridges = new Bridges(222, "scrmbld", 
-			"347981115445");
+    Bridges *bridges = new Bridges(222, "username", 
+			"YOUR_BRIDGES_API_KEY");
 	int lvl = player.get_level();
 	srand(time(0));
 	int spd  = speed_gen();
@@ -164,5 +163,3 @@ bool combat_mode(Hero &player) {
 	}
 	return true;
 }
-
-
